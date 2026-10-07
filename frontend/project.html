@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#100f0c"><title>Captain Hook · Mainnet proof</title>
+  <meta name="description" content="Captain Hook's live Pinocchio holder gate, three hook-aware buy/sell markets, and repeating on-chain auctions.">
+  <link rel="icon" href="/assets/captain-hook.svg">
+  <style>
+    :root{color-scheme:dark;--bg:#100f0c;--panel:#191710;--line:#3c3627;--ink:#eee7d1;--muted:#b2a78b;--brass:#e1bd55}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.7 system-ui,sans-serif}a{color:var(--brass);text-decoration:none}a:hover{text-decoration:underline}:focus-visible{outline:2px solid var(--brass);outline-offset:4px}.shell{max-width:1080px;margin:auto;padding:0 24px}header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:27px 0;border-bottom:1px solid var(--line)}.brand{display:flex;gap:12px;align-items:center;color:var(--ink);font-weight:700;letter-spacing:.06em}.brand img{width:32px;height:32px}.overline{font:10px ui-monospace,monospace;letter-spacing:.15em;color:var(--brass)}main{padding:56px 0 70px}h1{font-size:clamp(30px,5vw,55px);line-height:1.12;letter-spacing:-.04em;font-weight:600;margin:15px 0 24px}p{max-width:75ch;color:var(--muted)}.cta{display:inline-block;background:var(--brass);color:var(--bg);padding:11px 19px;border-radius:3px;font-weight:600;margin:16px 0 32px}section{margin-top:42px}h2{font-size:20px;letter-spacing:-.025em;font-weight:600}table{width:100%;border-collapse:collapse;background:var(--panel);font-size:12px}th,td{text-align:left;border-bottom:1px solid var(--line);padding:13px 16px;vertical-align:top}th{font:10px ui-monospace,monospace;color:var(--muted)}td code{font-size:11px;overflow-wrap:anywhere}.scroll{overflow:auto}.receipts{list-style:none;padding:0;margin:0;border:1px solid var(--line);background:var(--panel)}.receipts li{display:flex;justify-content:space-between;gap:25px;padding:14px 18px;border-bottom:1px solid var(--line)}.receipts li:last-child{border:0}.receipts span{color:var(--muted);font-size:12px}footer{font:10px ui-monospace,monospace;padding:25px 0;border-top:1px solid var(--line);color:var(--muted)}@media(max-width:600px){.receipts li{display:block}.receipts span{display:block;margin-top:5px}td,th{padding:10px}header{gap:12px}.brand{font-size:12px}}
+  </style>
+</head>
+<body><div class="shell">
+  <header><a class="brand" href="https://captainhook.fun"><img src="/assets/captain-hook.svg" alt="">CAPTAIN HOOK</a><a href="https://captainhook.fun">Open trading terminal ↗</a></header>
+  <main id="proof">
+    <div class="overline">SOLANA MAINNET / EXECUTION EVIDENCE</div>
+    <h1>The hook is live.<br>The routes are real.</h1>
+    <p>Captain Hook is a Pinocchio Token-2022 transfer gate, a wallet-signed router for XEEu, 5oCp, and DZVf, and a continuously repeating market for hook-pointer changes.</p>
+    <p>The receiving wallet must hold the same mint before any transfer. First-time zero-balance buys revert on-chain. The transfer path checks actual balances and owners; it creates no infection record and spends no status-account rent.</p>
+    <a class="cta" href="https://captainhook.fun">Buy, sell, and open auctions ↗</a>
+    <section><h2>The controlled markets</h2><div class="scroll"><table><thead><tr><th>MINT</th><th>EXECUTION</th><th>AUCTION</th></tr></thead><tbody>
+      <tr><td><strong>XEEu / Captain Hook</strong><br><code>XEEu6i2pqjsZn63spYuyDCd5yizaE1pJ7iPbNPW1oMo</code></td><td>SOL ↔ XEEu · best verified Orca V2 route</td><td>Always on · next round on win</td></tr>
+      <tr><td><strong>5oCp</strong><br><code>5oCpEpFo17kqmcs3454dYFsLGhSNdoPsmSaDRxh5YCzd</code></td><td>SOL ↔ GGo8 ↔ 5oCp · Raydium CP + Orca V2</td><td>Always on · next round on win</td></tr>
+      <tr><td><strong>DZVf</strong><br><code>DZVfZHdtS266p4qpTR7vFXxXbrBku18nt9Uxp4KD9bsi</code></td><td>SOL ↔ USDC ↔ DZVf · atomic Orca V2 two-hop</td><td>Always on · next round on win</td></tr>
+    </tbody></table></div></section>
+    <section><h2>Settlement rule</h2><p>Each hook auction is an English auction: bids escrow SOL on-chain, every raise must beat the leader by 10% and refunds the outbid wallet in the same instruction, the first bid starts a 30-minute clock, and a bid in the final 5 minutes extends the round by 5 minutes. When the clock runs out, the seller’s authority settles: payment, hook-pointer update, and a checked-transfer proof through the winning hook, atomically. The next round opens immediately. The literal hook authority remains <a href="https://solscan.io/account/331nEBz4i3XjyaUHVyHnpw9xBoW7D6P1qMPnUPd76Mth">331n…76Mth</a>.</p></section>
+    <section><h2>Current release receipts</h2><ul class="receipts">
+      <li><a href="https://solscan.io/tx/4knMM7cdhSvuqXcKJTMxwFaBSermSQNLbZipprfw3pyPmT6vM8huUYmLMd9U3YYYJHy6xQuFBDzpcqAevpVB38Za">Holder-gated Pinocchio program + auction upgrade ↗</a><span>Verified against the compiled SBF bytes</span></li>
+      <li><a href="https://solscan.io/tx/4xUCmiuzA4xgrfNi8pRPVYMaQ9p1dACBp1Etb7fgLF85ZhbmhhvYvRZauC5WbAXLE8fPh4STzgDD42r5YyBb3Gb6">All three holder-proof account lists ↗</a><span>Positive holders pass; zero holders revert with error 13</span></li>
+      <li><a href="https://solscan.io/tx/5vXyPyHLk7fWC3PVNeg8hoyYy9PRfcw9DwSBdyKNPsgahjbU8U6U872b2uNkNwXKyQbdg7fkixQLAC6YFDpbPb6j">Initialize all three repeating auctions ↗</a><span>Approved price, floor, and reset terms</span></li>
+      <li><a href="https://solscan.io/tx/5s4CK3kWdgzkpeWeVk9fBQSVScNDwvPSBmPLJzxmNhB8AaKDbehtA8Ce8wvu3U5mweB2t3kmXvUtBZqLTcRHLR5F">XEEu auction self-test → round 2 ↗</a><span>Operator self-settlement; payment net zero</span></li>
+      <li><a href="https://solscan.io/tx/3PkAzDEZwDE1g8V2sMrWtzpypzk4V1DPGnvG35kbHNNK7y6WBrLN76JQH13NY1sX4aXm8TXAhb3tdRbCec9atVyc">5oCp auction self-test → round 2 ↗</a><span>Checked transfer and immediate round reset</span></li>
+      <li><a href="https://solscan.io/tx/hPfL4tJvc7B7q5iLVhFN1mkWKjs7CJTPgTRMHEiijTMm6wN4nyQeESjpeKGjQ4WLJmVhcN5Y9uEYMtgCQcbE3eN">DZVf auction self-test → round 2 ↗</a><span>Literal authority retained</span></li>
+      <li><a href="https://solscan.io/tx/2Rwx3joLxovB4meLeUeUMy5KmRoopW8knmWWHt5ZyBDr4a4TgjnNG7EyzRVPZ6pQ1B1LXZQjvkUKrJPJsd96xQ53">Captain Hook name, symbol, and URI ↗</a><span>HOOK · live token metadata</span></li>
+    </ul></section>
+    <section><h2>Original pool and trade evidence</h2><p>These launch receipts predate the holder-only upgrade and establish the original funded pool and real trades.</p><ul class="receipts">
+      <li><a href="https://solscan.io/tx/2mHuDiSmT3ZFkjpt7NMYeFC9kkVLL88biPL3hjKg4F36395aRB9TchHwYYFRBJEBgzWnBs2mgJZLxDtpBi7ojT5B">XEEu/WSOL Whirlpool initialization ↗</a><span>Tick spacing 128</span></li>
+      <li><a href="https://solscan.io/tx/2KaUYghTzjKyHueMLN3jRnhEXgeCUNjFk4jnpe4HVyKMZUN9q7proL8QEzCRL2aVYrRykbYWMcapnoJhud1EPN97">Funded XEEu/WSOL position ↗</a><span>1 million XEEu and ~0.2872 WSOL</span></li>
+      <li><a href="https://solscan.io/tx/5d8XPUcjAH3W1R367oWkmCU26kJ6qDbd8vkSCdiJPgyrgfV7CJSM77q8enW3XrgYkBwFPPULDZ7JzvzigYjdTm9y">Separate-wallet hooked buy ↗</a><span>Confirmed before the holder-only policy change</span></li>
+    </ul></section>
+  </main><footer>CAPTAINHOOK.FUN / PINOCCHIO · JUPITER ULTRA · ORCA V2 · MAINNET</footer>
+</div></body></html>

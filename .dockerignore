@@ -1,0 +1,11 @@
+.git
+**/node_modules
+**/.env
+**/data
+**/secrets
+program
+ops
+*.db
+*.db-wal
+*.db-shm
+*keypair*.json

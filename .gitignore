@@ -8,3 +8,5 @@ node_modules/
 *keypair*.json
 .vercel
 .DS_Store
+snapshots/
+program/target/

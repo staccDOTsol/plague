@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#090806">
+  <meta name="description" content="The original PLAGUE holder snapshot: 7,669 wallets at confirmed Solana slot 453983172. Explore the separate live THOOOK transfer-hook experiment.">
+  <link rel="canonical" href="https://thoook.fly.dev/outbreak-map.html">
+  <link rel="icon" type="image/svg+xml" href="/assets/thoook-mark.svg">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="OG PLAGUE holder archive · THOOOK">
+  <meta property="og:description" content="A confirmed snapshot of the original PLAGUE holders. The new THOOOK transfer-hook mint is separate.">
+  <meta property="og:image" content="https://thoook.fly.dev/assets/thoook-plague-token.png">
+  <meta property="og:url" content="https://thoook.fly.dev/outbreak-map.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://thoook.fly.dev/assets/thoook-plague-token.png">
+  <title>OG PLAGUE holder archive · THOOOK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root{color-scheme:dark;--bg:#090806;--ink:#f6f0df;--muted:#aaa18a;--line:#393222;--gold:#efc53d;--pale:#ffe390;--mint:#d6ef8c;--display:"Big Shoulders Display",Impact,sans-serif;--body:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse 80% 42% at 50% -12%,#efc53d1c,transparent 75%),var(--bg);color:var(--ink);font:14px/1.6 var(--body)}
+    a{color:inherit}a:hover{color:var(--pale)}:focus-visible{outline:2px solid var(--pale);outline-offset:4px}::selection{background:var(--gold);color:var(--bg)}
+    .shell{max-width:1420px;margin:auto;padding:0 clamp(18px,3.5vw,54px)}.mono{font-family:var(--mono)}.eyebrow{font:500 11px/1.5 var(--mono);letter-spacing:.15em;text-transform:uppercase;color:var(--gold)}
+    .skip{position:absolute;left:12px;top:-60px;padding:8px 12px;background:var(--gold);color:var(--bg);z-index:5}.skip:focus{top:10px}
+    header{min-height:94px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid var(--line)}
+    .brand{display:flex;align-items:center;gap:13px;text-decoration:none}.brand svg{width:45px;height:45px;color:var(--gold);filter:drop-shadow(0 0 9px #efc53d65)}.brand b{display:block;font:800 33px/.8 var(--display);letter-spacing:.035em;color:var(--gold)}.brand small{display:block;font:500 10px/1.3 var(--mono);letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-top:8px}
+    nav{display:flex;align-items:center;gap:10px;font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase}nav a{text-decoration:none;padding:9px 12px;border:1px solid var(--line)}nav a:last-child{border-color:#efc53d88;color:var(--pale);background:#efc53d0b}
+    .hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(360px,.95fr);gap:clamp(25px,5vw,80px);align-items:center;min-height:640px;padding:65px 0 84px;border-bottom:1px solid var(--line)}
+    .hero h1{font:800 clamp(78px,9.3vw,142px)/.81 var(--display);letter-spacing:.01em;text-transform:uppercase;margin:24px 0 27px}.hero h1 span{color:var(--gold)}.lede{font-size:18px;line-height:1.65;color:#d8d0b9;max-width:57ch;margin:0 0 30px}
+    .actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px}.button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:10px 17px;text-decoration:none;font:600 11px var(--mono);letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--gold);background:var(--gold);color:#17120a}.button:hover{background:var(--pale);color:#17120a}.button.secondary{background:transparent;color:var(--pale);border-color:var(--line)}.button.secondary:hover{border-color:var(--gold)}
+    .art{position:relative;min-height:490px;border:1px solid #5a4924;background:#050403;overflow:hidden;box-shadow:0 28px 80px #0008}.art img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}.art:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#050403bd,transparent 24%,transparent 65%,#050403d9);pointer-events:none}.art-label{position:absolute;left:22px;right:22px;z-index:1;font:10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--pale);display:flex;justify-content:space-between;gap:10px}.art-label.top{top:20px}.art-label.bottom{bottom:20px}
+    .numbers{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;padding:13px 0 74px}.number{border:1px solid var(--line);background:linear-gradient(150deg,#211a0d,#0e0d09);padding:21px 23px;min-width:0}.number small{display:block;font:10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}.number strong{display:block;font:800 clamp(38px,4.2vw,66px)/1 var(--display);letter-spacing:.02em;color:var(--gold);margin:8px 0 5px}.number span{color:#d4cab1;font-size:12px}
+    .section{padding:0 0 82px}.section-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:21px}.section h2{font:800 clamp(48px,6vw,83px)/.9 var(--display);text-transform:uppercase;margin:8px 0 0}.section-head p{max-width:440px;color:var(--muted);margin:0}.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.card{border:1px solid var(--line);background:#13110c;padding:26px;min-width:0}.card .step{font:11px var(--mono);color:var(--gold);letter-spacing:.1em}.card h3{font:800 38px/1 var(--display);text-transform:uppercase;margin:20px 0 13px}.card p{color:#d2c9b4;margin:0 0 23px}.address{display:block;font:11px/1.6 var(--mono);color:var(--pale);overflow-wrap:anywhere;text-decoration:none;border-top:1px solid var(--line);padding-top:15px}
+    .state{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid #827038;margin-bottom:80px;background:radial-gradient(circle at 75% 35%,#cedf8130,transparent 35%),#19180e}.state>div{padding:30px}.state>div+div{border-left:1px solid #827038}.state b{display:block;font:800 44px/1 var(--display);text-transform:uppercase;color:var(--mint);margin:9px 0 14px}.state p{margin:0;color:#ddd7c3}.state .small{font:11px/1.7 var(--mono);color:var(--muted)}
+    footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:15px;padding:20px 0 27px;border-top:1px solid var(--line);font:10px var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+    @media(max-width:900px){.hero{grid-template-columns:1fr;min-height:0}.art{min-height:380px}.section-head{display:block}.section-head p{margin-top:14px}.state{grid-template-columns:1fr}.state>div+div{border-left:0;border-top:1px solid #827038}}
+    @media(max-width:610px){header{min-height:76px}.brand svg{width:34px;height:34px}.brand b{font-size:26px}.brand small{font-size:8px}nav a{font-size:9px;padding:7px}.hero{padding:59px 0}.hero h1{font-size:clamp(70px,17vw,105px)}.lede{font-size:16px}.art{min-height:300px}.numbers,.cards{grid-template-columns:1fr}.numbers{padding-bottom:62px}.number{padding:17px 21px}.number strong{font-size:50px}.section{padding-bottom:62px}.state{margin-bottom:62px}.state>div{padding:22px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  </style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="shell">
+  <header>
+    <a class="brand" href="/" aria-label="THOOOK home"><svg viewBox="0 0 100 100" fill="none" aria-hidden="true"><path d="M21 13v46c0 17 13 29 29 29s29-12 29-29V39M62 56l17-17 17 17" stroke="currentColor" stroke-width="10" stroke-linecap="square" stroke-linejoin="miter"/></svg><span><b>THOOOK</b><small>Transfer hook market / Solana</small></span></a>
+    <nav aria-label="Primary"><a href="/#proof">Mainnet proof</a><a href="/">Live market ↗</a></nav>
+  </header>
+  <main id="main">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <div class="eyebrow">Original PLAGUE / holder archive</div>
+        <h1 id="page-title">Before the<br><span>hook.</span></h1>
+        <p class="lede">A confirmed mainnet snapshot captured holders of the original PLAGUE mint. This is a holder record, not a live infection map or a claim page. The THOOOK transfer-hook experiment runs on a separate Token-2022 mint, XEEu.</p>
+        <div class="actions"><a class="button" href="/">Explore live THOOOK ↗</a><a class="button secondary" href="#snapshot">View snapshot facts ↓</a></div>
+      </div>
+      <div class="art" role="img" aria-label="Gold THOOOK hook within a PLAGUE contagion network">
+        <img src="/assets/thoook-plague-token.png" alt="" width="1254" height="1254">
+        <div class="art-label top"><span>THOOOK × PLAGUE</span><span>MAINNET</span></div>
+        <div class="art-label bottom"><span>OG holders</span><span>New hook: XEEu</span></div>
+      </div>
+    </section>
+    <section id="snapshot" aria-label="Confirmed holder snapshot">
+      <div class="numbers">
+        <div class="number"><small>Unique holder wallets</small><strong>7,669</strong><span>Nonzero OG PLAGUE balances at capture</span></div>
+        <div class="number"><small>Nonzero token accounts</small><strong>7,681</strong><span>Some wallets held more than one account</span></div>
+        <div class="number"><small>Confirmed snapshot slot</small><strong>453983172</strong><span>October 6, 2026 · 14:33 Toronto time</span></div>
+      </div>
+    </section>
+    <section class="section" aria-labelledby="two-mints">
+      <div class="section-head"><div><div class="eyebrow">Two distinct mints</div><h2 id="two-mints">The old host.<br>The new hook.</h2></div><p>The original token and the hooked demo have different mint addresses and token programs. The on-chain Whirlpool trade proves the XEEu hook path.</p></div>
+      <div class="cards">
+        <article class="card"><span class="step">01 / ORIGINAL PLAGUE</span><h3>OG holder snapshot.</h3><p>The original PLAGUE mint uses the standard SPL Token program. Its holder balances informed the snapshot, but this mint does not have a TransferHook extension.</p><a class="address" href="https://solscan.io/account/CscZaq5twomhUkvCY8Jdd1tge32L4Yj9FbkFFEZQpump" target="_blank" rel="noopener noreferrer">CscZaq5twomhUkvCY8Jdd1tge32L4Yj9FbkFFEZQpump ↗</a></article>
+        <article class="card"><span class="step">02 / THOOOK EXPERIMENT</span><h3>Live hooked mint.</h3><p>XEEu is Token-2022. Its deployed Pinocchio TransferHook remained active during a funded Orca Whirlpool swap on Solana mainnet.</p><a class="address" href="https://solscan.io/account/XEEu6i2pqjsZn63spYuyDCd5yizaE1pJ7iPbNPW1oMo" target="_blank" rel="noopener noreferrer">XEEu6i2pqjsZn63spYuyDCd5yizaE1pJ7iPbNPW1oMo ↗</a></article>
+      </div>
+    </section>
+    <section class="state" aria-label="Distribution status">
+      <div><div class="eyebrow">OG holder distribution</div><b>No claim is live.</b><p>The planned XEEu allocation is proportional to OG PLAGUE balances. Pool and treasury exclusions and the total allocation are still being finalized. No airdrop has been sent.</p></div>
+      <div><div class="eyebrow">Mainnet proof</div><b>The hook traded.</b><p>The XEEu/WSOL Whirlpool executed a real swap while Token-2022 invoked the new hook.</p><p class="small">0.005 WSOL → 1,990.797730128 XEEu</p><a class="address" href="https://solscan.io/tx/4zuRnGDWJg7ccG7FHufRiKAXFZDWzc9G3pd5MNB6CnxTjcxfZp72X8GUBbMYWMUQJ69uvpxEks8yNGz23CSE3ifm" target="_blank" rel="noopener noreferrer">Inspect the swap transaction ↗</a></div>
+    </section>
+  </main>
+  <footer><span>THOOOK / OG PLAGUE holder archive</span><span>Solana mainnet · No claim is active</span></footer>
+</div>
+</body>
+</html>

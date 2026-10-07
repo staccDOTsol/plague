@@ -1,14 +1,12 @@
 services:
   api:
-    build: .
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
     restart: unless-stopped
-    env_file: .env
     environment:
-      - DB_PATH=/app/data/plague.db
-      - PRIZE_KEYPAIR=/app/secrets/prize-keypair.json
-    volumes:
-      - ./data:/app/data
-      - ./secrets:/app/secrets:ro
+      RPC_URL: ${RPC_URL:?set RPC_URL in .env}
+      PORT: "8080"
     expose:
       - "8080"
 

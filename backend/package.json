@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Indexer + API for the $PLAGUE outbreak map",
+  "description": "Read-only THOOOK inventory and buyer preflight API",
   "engines": {
     "node": ">=20"
   },
   "scripts": {
-    "start": "node src/server.js",
+    "start": "node src/hook-market-server.js",
+    "start:legacy": "node src/server.js",
     "test": "node scripts/test.js && node scripts/test-fees.js",
     "demo": "node scripts/demo.js",
     "payout": "node scripts/payout.js",
@@ -16,12 +17,21 @@
   },
   "dependencies": {
     "@bonfida/spl-name-service": "^3.0.0",
+    "@coral-xyz/anchor": "^0.32.1",
     "@meteora-ag/cp-amm-sdk": "^1.5.1",
     "@meteora-ag/dynamic-bonding-curve-sdk": "^1.5.13",
+    "@orca-so/common-sdk": "^0.7.0",
+    "@orca-so/whirlpools-sdk": "^0.22.0",
+    "@raydium-io/raydium-sdk-v2": "0.2.73-alpha",
+    "@solana/spl-token": "^0.4.15",
+    "@solana/spl-token-metadata": "^0.1.6",
     "@solana/web3.js": "^1.98.0",
     "better-sqlite3": "^11.7.0",
+    "bn.js": "^5.2.5",
+    "bs58": "^6.0.0",
     "compression": "^1.7.5",
     "cors": "^2.8.5",
+    "decimal.js": "^10.6.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2"
   }
