@@ -13,9 +13,10 @@ import {
   increaseLiquidityQuoteByInputTokenWithParams, decreaseLiquidityQuoteByLiquidityWithParams,
 } from '@orca-so/whirlpools-sdk';
 import {
-  TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID, NATIVE_MINT, ExtensionType, getExtensionTypes, getTransferHook, unpackMint,
+  TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID, NATIVE_MINT, ExtensionType, getExtensionTypes, getExtensionData, getTransferHook, unpackMint,
   getAssociatedTokenAddressSync, createAssociatedTokenAccountIdempotentInstruction, createSyncNativeInstruction, createCloseAccountInstruction,
 } from '@solana/spl-token';
+import { unpack as unpackTokenMetadata } from '@solana/spl-token-metadata';
 import BN from 'bn.js';
 import Decimal from 'decimal.js';
 import { HOOK, WSOL, USDC, MARKET_BY_MINT } from './router-markets.js';
@@ -53,6 +54,29 @@ async function birdeyePrice(mint) {
   } catch { return null; }
 }
 
+const METAPLEX = new PublicKey('metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s');
+function token2022Symbol(mint) {
+  try {
+    const data = getExtensionData(ExtensionType.TokenMetadata, mint.tlvData);
+    return data ? unpackTokenMetadata(data).symbol?.trim() || null : null;
+  } catch { return null; }
+}
+async function metaplexSymbol(connection, address) {
+  try {
+    const [pda] = PublicKey.findProgramAddressSync([Buffer.from('metadata'), METAPLEX.toBuffer(), address.toBuffer()], METAPLEX);
+    const info = await connection.getAccountInfo(pda, 'confirmed');
+    if (!info) return null;
+    const nameLength = info.data.readUInt32LE(65);
+    const symbolOffset = 69 + nameLength;
+    const symbolLength = info.data.readUInt32LE(symbolOffset);
+    return info.data.subarray(symbolOffset + 4, symbolOffset + 4 + symbolLength).toString('utf8').replace(/\0+$/, '').trim() || null;
+  } catch { return null; }
+}
+const counterInfoSymbol = (pair) => pair.counterInfo.symbol || 'counter';
+async function symbolFor(connection, address, mint) {
+  const base58 = address.toBase58();
+  return COUNTERS[base58] || MARKET_BY_MINT.get(base58)?.label || token2022Symbol(mint) || await metaplexSymbol(connection, address) || null;
+}
 async function mintDetails(connection, address) {
   const info = await connection.getAccountInfo(address, 'confirmed');
   if (!info || (!info.owner.equals(TOKEN_PROGRAM_ID) && !info.owner.equals(TOKEN_2022_PROGRAM_ID))) {
@@ -62,7 +86,7 @@ async function mintDetails(connection, address) {
   const extensions = info.owner.equals(TOKEN_2022_PROGRAM_ID) ? getExtensionTypes(mint.tlvData).map((type) => ExtensionType[type]) : [];
   const hook = info.owner.equals(TOKEN_2022_PROGRAM_ID) ? getTransferHook(mint) : null;
   const hookProgram = hook?.programId && !hook.programId.equals(PublicKey.default) ? hook.programId.toBase58() : null;
-  return { address: address.toBase58(), decimals: mint.decimals, tokenProgram: info.owner.toBase58(), extensions, hookProgram,
+  return { address: address.toBase58(), decimals: mint.decimals, tokenProgram: info.owner.toBase58(), extensions, hookProgram, symbol: await symbolFor(connection, address, mint),
     badgeRequired: info.owner.equals(TOKEN_2022_PROGRAM_ID) && extensions.some((name) => ['TransferHook', 'PermanentDelegate', 'TransferFeeConfig'].includes(name)) || Boolean(hookProgram),
     mint: { ...mint, tokenProgram: info.owner } };
 }
@@ -179,13 +203,21 @@ export async function liquidityOverview(connection, body) {
     : 'No usable Whirlpools config was found for this wallet.');
   if (!splash && pair.mintInfo.hookProgram === HOOK) warnings.push('This mint’s hook only lets existing holders receive it. A brand-new pool vault holds nothing, so its first deposit would revert. Add liquidity to the existing pool instead.');
   if (!pricing) warnings.push('No Birdeye price for this pair yet. Enter the starting price yourself; it only sets the first trade’s price and liquidity then moves it.');
+  if (pricing && splash) {
+    const raw = new Decimal(PriceMath.sqrtPriceX64ToPrice(splash.data.sqrtPrice, pair.a.decimals, pair.b.decimals).toString());
+    const poolPrice = pair.inverted ? new Decimal(1).div(raw) : raw, marketPrice = new Decimal(pricing.counterPerMint);
+    if (poolPrice.gt(0) && marketPrice.gt(0)) {
+      const ratio = poolPrice.div(marketPrice);
+      if (ratio.gt(2) || ratio.lt(0.5)) warnings.push(`Pool price is ${ratio.gt(1) ? `${ratio.toFixed(0)}× above` : `${new Decimal(1).div(ratio).toFixed(0)}× below`} the Birdeye market price (${poolPrice.toSignificantDigits(6)} vs ${marketPrice.toSignificantDigits(6)} ${counterInfoSymbol(pair)} per token). Full-range deposits are matched at the pool price, so the cheaper side would go to the first arbitrageur. Trade the pool back toward market, or use a different pool, before depositing.`);
+    }
+  }
   const [lowerTick, upperTick] = TickUtil.getFullRangeTickIndex(splash?.data.tickSpacing || SPACING);
   return {
-    chain: 'mainnet-beta', mint: { ...pair.mintInfo, mint: undefined, symbol: market?.label || null }, counter: { ...pair.counterInfo, mint: undefined, symbol: COUNTERS[pair.counter.toBase58()] || null },
+    chain: 'mainnet-beta', mint: { ...pair.mintInfo, mint: undefined, symbol: market?.label || pair.mintInfo.symbol || null }, counter: { ...pair.counterInfo, mint: undefined, symbol: pair.counterInfo.symbol || null },
     order: { tokenA: pair.a.address, tokenB: pair.b.address, inverted: pair.inverted,
       explanation: pair.inverted
-        ? `Orca sorts the pair by address, so ${COUNTERS[pair.counter.toBase58()] || 'the counter token'} is token A and your mint is token B. Orca’s raw price is therefore “mint per ${COUNTERS[pair.counter.toBase58()] || 'counter'}”, the inverse of the price you think in. The wizard flips it for you; the figures below show both.`
-        : `Orca sorts the pair by address, so your mint is token A and ${COUNTERS[pair.counter.toBase58()] || 'the counter token'} is token B. Orca’s raw price is “${COUNTERS[pair.counter.toBase58()] || 'counter'} per mint”, the same direction you think in.` },
+        ? `Orca sorts the pair by address, so ${pair.counterInfo.symbol || 'the counter token'} is token A and your mint is token B. Orca’s raw price is therefore “mint per ${pair.counterInfo.symbol || 'counter'}”, the inverse of the price you think in. The wizard flips it for you; the figures below show both.`
+        : `Orca sorts the pair by address, so your mint is token A and ${pair.counterInfo.symbol || 'the counter token'} is token B. Orca’s raw price is “${pair.counterInfo.symbol || 'counter'} per mint”, the same direction you think in.` },
     pricing, pools: pools.map((pool) => describePool(pool, pair.a, pair.b, pair.inverted)), pool: splash ? describePool(splash, pair.a, pair.b, pair.inverted) : null,
     fullRange: { lowerTick, upperTick, tickSpacing: splash?.data.tickSpacing || SPACING },
     positions: positions.map((position) => ({ address: position.address.toBase58(), mint: position.mint.toBase58(), liquidity: position.data.liquidity.toString(),
@@ -278,7 +310,7 @@ export async function prepareLiquidity(connection, body) {
     const prepared = await packet(connection, wallet, instructions, 'Splash Pool initialization', [vaultA, vaultB]);
     return { ...prepared, body: { ...base, ...prepared.public, config: config.toBase58(), pool: whirlpool.publicKey.toBase58(), tickArrays: starts,
       priceCounterPerMint: price.toFixed(), priceTokenBPerTokenA: tokenBPerTokenA.toFixed(), initialTick: PriceMath.sqrtPriceX64ToTickIndex(sqrtPrice),
-      message: `Initializes the pool at ${price.toFixed()} ${COUNTERS[pair.counter.toBase58()] || 'counter'} per token${pair.inverted ? ` (stored by Orca as ${tokenBPerTokenA.toFixed()} token per counter because of address ordering)` : ''}, plus the two full-range tick arrays a Splash Pool needs. No tokens move yet.` } };
+      message: `Initializes the pool at ${price.toFixed()} ${pair.counterInfo.symbol || 'counter'} per token${pair.inverted ? ` (stored by Orca as ${tokenBPerTokenA.toFixed()} token per counter because of address ordering)` : ''}, plus the two full-range tick arrays a Splash Pool needs. No tokens move yet.` } };
   }
 
   const poolAddress = key(body.pool);
