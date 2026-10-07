@@ -9,18 +9,29 @@ import { TradeError } from './trade-errors.js';
 // receipt therefore binds the *intent*: fee payer, blockhash, and every
 // non-guard instruction's program, resolved account keys, signer flags, and
 // data. Guard instructions can only assert and abort, never move value.
-const GUARD_PROGRAMS = new Set(['L2TExMFKdjpN9kozasaurPirfHy9P8sbXoAN1qA3S95']);
-export function intentHash(message) {
+// Phantom also rewrites ComputeBudget instructions when it applies its own
+// priority fee, so those are ignored as well: they bound fees, not value.
+const GUARD_PROGRAMS = new Set(['L2TExMFKdjpN9kozasaurPirfHy9P8sbXoAN1qA3S95', 'ComputeBudget111111111111111111111111111111']);
+export function intentParts(message) {
   const statics = message.staticAccountKeys;
   const resolve = (index) => statics[index]?.toBase58() ?? `lookup:${index}`;
-  const parts = [resolve(0), message.recentBlockhash];
+  const instructions = [];
   for (const ix of message.compiledInstructions) {
     const program = resolve(ix.programIdIndex);
     if (GUARD_PROGRAMS.has(program)) continue;
-    parts.push(program, ix.accountKeyIndexes.map((index) => `${resolve(index)}${message.isAccountSigner(index) ? '!' : ''}`).join(','),
-      Buffer.from(ix.data).toString('base64'));
+    const body = [program, ix.accountKeyIndexes.map((index) => `${resolve(index)}${message.isAccountSigner(index) ? '!' : ''}`).join(','),
+      Buffer.from(ix.data).toString('base64')].join('\n');
+    instructions.push({ program, fingerprint: createHash('sha256').update(body).digest('hex').slice(0, 12), body });
   }
-  return createHash('sha256').update(parts.join('\n')).digest('hex');
+  return { payer: resolve(0), blockhash: message.recentBlockhash, instructions };
+}
+export function intentHash(message) {
+  const intent = intentParts(message);
+  return createHash('sha256').update([intent.payer, intent.blockhash, ...intent.instructions.map((ix) => ix.body)].join('\n')).digest('hex');
+}
+export function intentSummary(message) {
+  const intent = intentParts(message);
+  return { payer: intent.payer, blockhash: intent.blockhash, ixs: intent.instructions.map((ix) => `${ix.program.slice(0, 8)}:${ix.fingerprint}`) };
 }
 export function messageHash(tx) {
   return intentHash(tx.message);
@@ -35,12 +46,12 @@ export function createPreparationReceipts() {
   const sign = (body) => createHmac('sha256', secret).update(body).digest('base64url');
   return {
     issue(tx, record) {
-      const body = Buffer.from(JSON.stringify({ ...record, hash: messageHash(tx),
+      const body = Buffer.from(JSON.stringify({ ...record, hash: messageHash(tx), intent: intentSummary(tx.message),
         issuedAt: Date.now(), expiresAt: Date.now() + 120_000 })).toString('base64url');
       return `${body}.${sign(body)}`;
     },
     read(token, allowExpired = false) {
-      if (typeof token !== 'string' || token.length > 2400) throw new TradeError(400, 'BAD_RECEIPT', 'Invalid transaction preparation receipt.');
+      if (typeof token !== 'string' || token.length > 6000) throw new TradeError(400, 'BAD_RECEIPT', 'Invalid transaction preparation receipt.');
       const [body, signature, extra] = token.split('.');
       const actual = Buffer.from(signature || '', 'base64url');
       const expected = Buffer.from(sign(body || ''), 'base64url');
@@ -60,6 +71,12 @@ export function createPreparationReceipts() {
 
 export function verifyBuyerSigned(tx, record) {
   if (messageHash(tx) !== record.hash || !tx.message.staticAccountKeys[0]?.equals(new PublicKey(record.buyer))) {
+    const signed = intentSummary(tx.message);
+    const programs = tx.message.compiledInstructions.map((ix) => tx.message.staticAccountKeys[ix.programIdIndex]?.toBase58() ?? `lookup:${ix.programIdIndex}`);
+    console.error(JSON.stringify({ event: 'TRANSACTION_CHANGED', buyer: record.buyer, engine: record.engine, stage: record.stage,
+      payerChanged: signed.payer !== record.intent?.payer, blockhashChanged: signed.blockhash !== record.intent?.blockhash,
+      expectedIxs: record.intent?.ixs, signedIxs: signed.ixs, signedPrograms: programs, version: tx.version,
+      lookupTables: tx.message.addressTableLookups?.length ?? 0, signedTransaction: Buffer.from(tx.serialize()).toString('base64') }));
     throw new TradeError(400, 'TRANSACTION_CHANGED', 'The wallet changed the prepared transaction. Request a fresh quote.');
   }
   const signature = tx.signatures[0];
